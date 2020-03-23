@@ -36,17 +36,23 @@ class dyanamoOps:
                 aws_secret_access_key = <value here>
                 endpoint_url = <value here>
         """
+
         config = configparser.ConfigParser()
         config.read(kwargs.get('config_file_location', "./dynamodb_dataframes_config.ini"))
         default_config = config['DEFAULT']
         region_name = default_config.get('region_name', 'us-west-2')
         aws_access_key_id = default_config.get('aws_access_key_id', ' ')
         aws_secret_access_key = default_config.get('aws_secret_access_key', ' ')
-        endpoint_url = default_config.get('endpoint_url', 'http://localhost:8000')
+        endpoint_url = default_config.get('endpoint_url', 'https://dynamodb.${region_name}.amazonaws.com')
 
-        cls.session = boto3.session.Session(region_name=kwargs.get('region_name', region_name),
-        aws_access_key_id=kwargs.get('aws_access_key_id', aws_access_key_id),
-        aws_secret_access_key=kwargs.get('aws_secret_access_key', aws_secret_access_key))
+        cls.session = None
+        if os.environ['AWS_PROFILE']:
+            cls.session = boto3.session.Session(profile_name=os.environ['AWS_PROFILE'])
+        else:
+            cls.session = boto3.session.Session(region_name=kwargs.get('region_name', region_name),
+                aws_access_key_id=kwargs.get('aws_access_key_id', aws_access_key_id),
+                aws_secret_access_key=kwargs.get('aws_secret_access_key', aws_secret_access_key))
+
         cls.resource = cls.session.resource('dynamodb',
                                             endpoint_url=kwargs.get('endpoint_url', endpoint_url))
 
