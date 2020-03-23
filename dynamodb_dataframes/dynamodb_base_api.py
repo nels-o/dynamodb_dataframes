@@ -43,7 +43,7 @@ class dyanamoOps:
         region_name = default_config.get('region_name', 'us-west-2')
         aws_access_key_id = default_config.get('aws_access_key_id', ' ')
         aws_secret_access_key = default_config.get('aws_secret_access_key', ' ')
-        endpoint_url = default_config.get('endpoint_url', 'https://dynamodb.${region_name}.amazonaws.com')
+        endpoint_url = default_config.get('endpoint_url', f'https://dynamodb.{region_name}.amazonaws.com')
 
         cls.session = None
         if os.environ['AWS_PROFILE']:
